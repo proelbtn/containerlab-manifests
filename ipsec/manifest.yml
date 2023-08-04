@@ -1,0 +1,24 @@
+name: ipsec
+
+topology:
+  nodes:
+    rt01:
+      kind: linux
+      image: mberner/strongswan:5.9.11
+      binds: ["./rt01/start.sh:/start.sh:ro", "./rt01/swanctl.conf:/etc/swanctl/swanctl.conf", "./strongswan.conf:/etc/strongswan.conf:ro"]
+      entrypoint: /start.sh
+    rt02:
+      kind: linux
+      image: mberner/strongswan:5.9.11
+      binds: ["./rt02/start.sh:/start.sh:ro", "./rt02/swanctl.conf:/etc/swanctl/swanctl.conf", "./strongswan.conf:/etc/strongswan.conf:ro"]
+      entrypoint: /start.sh
+    sv01:
+      kind: linux
+      image: nicolaka/netshoot
+    sv02:
+      kind: linux
+      image: nicolaka/netshoot
+  links:
+    - endpoints: [rt01:eth1, rt02:eth1]
+    - endpoints: [rt01:eth2, sv01:eth1]
+    - endpoints: [rt02:eth2, sv02:eth1]
